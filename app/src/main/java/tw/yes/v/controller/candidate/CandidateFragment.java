@@ -1,0 +1,147 @@
+package tw.yes.v.controller.candidate;
+
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import tw.yes.v.R;
+import tw.yes.v.model.Candidate;
+
+@EFragment(R.layout.fragment_candidate)
+@OptionsMenu(R.menu.launcher_menu)
+public class CandidateFragment extends Fragment
+        implements ActionBar.TabListener {
+
+    private static final String TAG = CandidateFragment.class.getSimpleName();
+
+    private CandidateFragment mCandidateFragment;
+    private ActionBar mActionBar;
+
+    @ViewById(R.id.progress)
+    RelativeLayout mProgress;
+    @ViewById(R.id.pager)
+    ViewPager mPager;
+
+    private CandidatePagerAdapter mPagerAdapter;
+
+    @AfterViews
+    void initViews() {
+
+        mCandidateFragment = this;
+
+        setHasOptionsMenu(true);
+
+        mActionBar = getActivity().getActionBar();
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mActionBar.setTitle("");
+
+        mPagerAdapter = new CandidatePagerAdapter(getFragmentManager());
+        mPagerAdapter.setCandidates(new ArrayList<Candidate>());
+        mPager.setAdapter(mPagerAdapter);
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                mActionBar.setSelectedNavigationItem(position);
+            }
+        });
+
+        ParseQuery<Candidate> query = ParseQuery.getQuery("candidate");
+        query.fromLocalDatastore();
+        query.findInBackground(new FindCallback<Candidate>() {
+            @Override
+            public void done(List<Candidate> candidates, ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
+                } else {
+                    if (candidates.size() == 0) {
+                        refresh();
+                    } else {
+                        mPagerAdapter.setCandidates(candidates);
+                        mPagerAdapter.notifyDataSetChanged();
+                        mPager.setOffscreenPageLimit(candidates.size());
+                        for (Candidate candidate : candidates) {
+                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    void refresh() {
+        mProgress.setVisibility(View.VISIBLE);
+        ParseQuery<Candidate> queryW = ParseQuery.getQuery("candidate");
+        queryW.findInBackground(new FindCallback<Candidate>() {
+            public void done(List<Candidate> candidates, ParseException e) {
+                mProgress.setVisibility(View.GONE);
+                if (e != null) {
+                    Toast.makeText(getActivity(), "噢喔～有點問題喔！\n請確認您的網路狀態", Toast.LENGTH_LONG).show();
+                } else {
+                    ParseObject.pinAllInBackground(candidates);
+                    mPagerAdapter.setCandidates(candidates);
+                    mPagerAdapter.notifyDataSetChanged();
+                    mPager.setOffscreenPageLimit(candidates.size());
+                    if (mActionBar.getTabCount() == 0) {
+                        for (Candidate candidate : candidates) {
+                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    @OptionsItem(R.id.refresh)
+    void menuRefresh() {
+        refresh();
+    }
+
+    @OptionsItem(R.id.feedback)
+    void menuFeedback() {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:joshuayes@gmail.com"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "給 V 的意見回饋");
+        intent.putExtra(Intent.EXTRA_TEXT, "內容：\n");
+        startActivity(intent);
+    }
+
+    /**
+     * Tab
+     */
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        mPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+
+}
