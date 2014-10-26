@@ -1,9 +1,14 @@
-package tw.yes.v.controller;
+package tw.yes.v.controller.candidate;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -16,21 +21,24 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import tw.yes.v.R;
 import tw.yes.v.model.Candidate;
 
-@EFragment(R.layout.fragment_launcher)
+@EFragment(R.layout.fragment_candidate)
 @OptionsMenu(R.menu.launcher_menu)
-public class LauncherFragment extends Fragment
+public class CandidateFragment extends Fragment
         implements ActionBar.TabListener {
 
-    private static final String TAG = LauncherFragment.class.getSimpleName();
+    private static final String TAG = CandidateFragment.class.getSimpleName();
 
-    private LauncherFragment mLauncherFragment;
+    private CandidateFragment mCandidateFragment;
     private ActionBar mActionBar;
 
+    @ViewById(R.id.progress)
+    RelativeLayout mProgress;
     @ViewById(R.id.pager)
     ViewPager mPager;
 
@@ -39,14 +47,17 @@ public class LauncherFragment extends Fragment
     @AfterViews
     void initViews() {
 
-        mLauncherFragment = this;
+        mCandidateFragment = this;
 
         setHasOptionsMenu(true);
 
         mActionBar = getActivity().getActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mActionBar.setTitle("");
 
-
+        mPagerAdapter = new CandidatePagerAdapter(getFragmentManager());
+        mPagerAdapter.setCandidates(new ArrayList<Candidate>());
+        mPager.setAdapter(mPagerAdapter);
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -60,18 +71,16 @@ public class LauncherFragment extends Fragment
             @Override
             public void done(List<Candidate> candidates, ParseException e) {
                 if (e != null) {
-
+                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
                 } else {
                     if (candidates.size() == 0) {
                         refresh();
                     } else {
-                        mPagerAdapter = new CandidatePagerAdapter(getFragmentManager());
                         mPagerAdapter.setCandidates(candidates);
+                        mPagerAdapter.notifyDataSetChanged();
                         mPager.setOffscreenPageLimit(candidates.size());
-                        mPager.setAdapter(mPagerAdapter);
-
                         for (Candidate candidate : candidates) {
-                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mLauncherFragment));
+                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
                         }
                     }
                 }
@@ -80,14 +89,23 @@ public class LauncherFragment extends Fragment
     }
 
     void refresh() {
+        mProgress.setVisibility(View.VISIBLE);
         ParseQuery<Candidate> queryW = ParseQuery.getQuery("candidate");
         queryW.findInBackground(new FindCallback<Candidate>() {
             public void done(List<Candidate> candidates, ParseException e) {
+                mProgress.setVisibility(View.GONE);
                 if (e != null) {
+                    Toast.makeText(getActivity(), "噢喔～有點問題喔！\n請確認您的網路狀態", Toast.LENGTH_LONG).show();
                 } else {
                     ParseObject.pinAllInBackground(candidates);
                     mPagerAdapter.setCandidates(candidates);
                     mPagerAdapter.notifyDataSetChanged();
+                    mPager.setOffscreenPageLimit(candidates.size());
+                    if (mActionBar.getTabCount() == 0) {
+                        for (Candidate candidate : candidates) {
+                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
+                        }
+                    }
                 }
             }
         });
@@ -96,6 +114,15 @@ public class LauncherFragment extends Fragment
     @OptionsItem(R.id.refresh)
     void menuRefresh() {
         refresh();
+    }
+
+    @OptionsItem(R.id.feedback)
+    void menuFeedback() {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:joshuayes@gmail.com"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "給 V 的意見回饋");
+        intent.putExtra(Intent.EXTRA_TEXT, "內容：\n");
+        startActivity(intent);
     }
 
     /**

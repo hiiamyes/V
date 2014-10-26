@@ -1,4 +1,4 @@
-package tw.yes.v.controller;
+package tw.yes.v.controller.candidate;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

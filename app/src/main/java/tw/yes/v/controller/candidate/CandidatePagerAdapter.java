@@ -1,4 +1,4 @@
-package tw.yes.v.controller;
+package tw.yes.v.controller.candidate;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,5 +28,10 @@ public class CandidatePagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return mCandidates.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return super.getItemPosition(object);
     }
 }

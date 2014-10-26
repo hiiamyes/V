@@ -9,6 +9,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 
 import tw.yes.v.R;
+import tw.yes.v.controller.candidate.CandidateFragment_;
 
 @EActivity(R.layout.activity_launcher)
 public class LauncherActivity extends FragmentActivity {
@@ -21,7 +22,7 @@ public class LauncherActivity extends FragmentActivity {
 
     @AfterViews
     void initViews() {
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new LauncherFragment_()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new CandidateFragment_()).commit();
     }
 
 

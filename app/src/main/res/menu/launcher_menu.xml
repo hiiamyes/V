@@ -3,6 +3,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/refresh"
-        android:title="refresh"
-        android:icon="@drawable/ic_launcher" />
+        android:title="更新資料"
+        android:icon="@drawable/ic_refresh_white_36dp"
+        android:showAsAction="always" />
+    <item
+        android:id="@+id/feedback"
+        android:title="意見回饋"
+        android:icon="@drawable/ic_email_white_36dp"
+        android:showAsAction="always" />
 </menu>
