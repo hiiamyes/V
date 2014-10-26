@@ -34,9 +34,6 @@ dependencies {
     apt "org.androidannotations:androidannotations:3.1"
     compile 'org.androidannotations:androidannotations-api:3.1'
 
-    // ViewPagerIndicator
-    compile 'com.viewpagerindicator:library:2.4.1@aar'
-
     // Parse
     compile files('libs/Parse-1.7.1/Parse-1.7.1.jar')
     compile files('libs/Parse-1.7.1/bolts-android-1.1.3.jar')

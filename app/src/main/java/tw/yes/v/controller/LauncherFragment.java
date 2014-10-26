@@ -1,12 +1,9 @@
 package tw.yes.v.controller;
 
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -15,6 +12,8 @@ import com.parse.ParseQuery;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -23,10 +22,14 @@ import tw.yes.v.R;
 import tw.yes.v.model.Candidate;
 
 @EFragment(R.layout.fragment_launcher)
-public class LauncherFragment extends Fragment {
+@OptionsMenu(R.menu.launcher_menu)
+public class LauncherFragment extends Fragment
+        implements ActionBar.TabListener {
 
     private static final String TAG = LauncherFragment.class.getSimpleName();
 
+    private LauncherFragment mLauncherFragment;
+    private ActionBar mActionBar;
 
     @ViewById(R.id.pager)
     ViewPager mPager;
@@ -36,7 +39,20 @@ public class LauncherFragment extends Fragment {
     @AfterViews
     void initViews() {
 
+        mLauncherFragment = this;
+
         setHasOptionsMenu(true);
+
+        mActionBar = getActivity().getActionBar();
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                mActionBar.setSelectedNavigationItem(position);
+            }
+        });
 
         ParseQuery<Candidate> query = ParseQuery.getQuery("candidate");
         query.fromLocalDatastore();
@@ -51,7 +67,12 @@ public class LauncherFragment extends Fragment {
                     } else {
                         mPagerAdapter = new CandidatePagerAdapter(getFragmentManager());
                         mPagerAdapter.setCandidates(candidates);
+                        mPager.setOffscreenPageLimit(candidates.size());
                         mPager.setAdapter(mPagerAdapter);
+
+                        for (Candidate candidate : candidates) {
+                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mLauncherFragment));
+                        }
                     }
                 }
             }
@@ -72,43 +93,27 @@ public class LauncherFragment extends Fragment {
         });
     }
 
+    @OptionsItem(R.id.refresh)
+    void menuRefresh() {
+        refresh();
+    }
+
+    /**
+     * Tab
+     */
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.launcher_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        mPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.refresh:
-                refresh();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 
-    public class CandidatePagerAdapter extends FragmentStatePagerAdapter {
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
-        private List<Candidate> mCandidates;
-
-        public CandidatePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        public void setCandidates(List<Candidate> candidates) {
-            mCandidates = candidates;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return CandidatePageFragment_.builder().mCandidate(mCandidates.get(position)).build();
-        }
-
-        @Override
-        public int getCount() {
-            return mCandidates.size();
-        }
     }
 
 

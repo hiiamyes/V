@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.Fragment;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -25,15 +24,11 @@ public class CandidatePageFragment extends Fragment {
     Candidate mCandidate;
 
 
-    @ViewById(R.id.name)
-    TextView mName;
-
     @ViewById(R.id.profile)
     ImageView mProfile;
 
     @AfterViews
     void initViews() {
-        mName.setText(mCandidate.getName());
 
         ParseFile profile = mCandidate.getProfile();
         if (profile != null) {
