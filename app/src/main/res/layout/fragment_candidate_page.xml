@@ -2,11 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LauncherActivity">
+    tools:context=".LauncherActivity"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/listview_politics"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <tw.yes.v.controller.CircularImageView
         android:id="@+id/profile"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerInParent="true" />
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
 </RelativeLayout>
