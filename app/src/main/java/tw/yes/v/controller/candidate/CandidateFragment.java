@@ -64,6 +64,7 @@ public class CandidateFragment extends Fragment
             }
         });
 
+
         ParseQuery<Candidate> query = ParseQuery.getQuery("candidate");
         query.orderByAscending("number");
         query.fromLocalDatastore();
@@ -71,14 +72,16 @@ public class CandidateFragment extends Fragment
             @Override
             public void done(List<Candidate> candidates, ParseException e) {
                 if (e != null) {
-                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
+                    refresh();
                 } else {
-                    if (candidates.size() == 0) {
+                    if (candidates.size() == 0 || candidates.get(0).getNumber() == 0) {
                         refresh();
                     } else {
                         mPagerAdapter.setCount(candidates.size());
                         mPagerAdapter.notifyDataSetChanged();
                         mPager.setOffscreenPageLimit(candidates.size());
+                        mActionBar.removeAllTabs();
                         for (Candidate candidate : candidates) {
                             mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
                         }
@@ -95,6 +98,7 @@ public class CandidateFragment extends Fragment
         query.findInBackground(new FindCallback<Candidate>() {
             public void done(final List<Candidate> candidates, ParseException e) {
                 if (e != null) {
+                    mProgress.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), "噢喔～有點問題喔！\n請確認您的網路狀態", Toast.LENGTH_LONG).show();
                 } else {
                     ParseObject.pinAllInBackground(candidates);
@@ -107,6 +111,7 @@ public class CandidateFragment extends Fragment
                             mPagerAdapter.setCount(candidates.size());
                             mPagerAdapter.notifyDataSetChanged();
                             mPager.setOffscreenPageLimit(candidates.size());
+                            mActionBar.removeAllTabs();
                             for (Candidate candidate : candidates) {
                                 mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
                             }
