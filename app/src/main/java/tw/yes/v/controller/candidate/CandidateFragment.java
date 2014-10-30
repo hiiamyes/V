@@ -80,6 +80,7 @@ public class CandidateFragment extends Fragment
                         mPagerAdapter.setCount(candidates.size());
                         mPagerAdapter.notifyDataSetChanged();
                         mPager.setOffscreenPageLimit(candidates.size());
+                        mActionBar.removeAllTabs();
                         for (Candidate candidate : candidates) {
                             mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
                         }
@@ -108,6 +109,7 @@ public class CandidateFragment extends Fragment
                             mPagerAdapter.setCount(candidates.size());
                             mPagerAdapter.notifyDataSetChanged();
                             mPager.setOffscreenPageLimit(candidates.size());
+                            mActionBar.removeAllTabs();
                             for (Candidate candidate : candidates) {
                                 mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
                             }
