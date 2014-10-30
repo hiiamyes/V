@@ -74,10 +74,8 @@ public class CandidateFragment extends Fragment
                 if (e != null) {
 //                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
                     refresh();
-                } else if (candidates.get(0).getNumber() == 0) {
-                    refresh();
                 } else {
-                    if (candidates.size() == 0) {
+                    if (candidates.size() == 0 || candidates.get(0).getNumber() == 0) {
                         refresh();
                     } else {
                         mPagerAdapter.setCount(candidates.size());
