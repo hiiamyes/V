@@ -4,7 +4,7 @@ apply plugin: 'android-apt'
 android {
     signingConfigs {
         debug {
-            storeFile file('debug.keystore');
+            storeFile file('/Users/Yes/Dropbox/Yes/mAndroid/V/app/debug.keystore');
         }
         release {
             // for releasing, please use command line to run ./gradlew assembleRelease
@@ -28,7 +28,7 @@ android {
     buildTypes {
         debug {}
         release {
-            runProguard true
+            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
