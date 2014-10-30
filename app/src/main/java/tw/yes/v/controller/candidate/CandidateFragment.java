@@ -71,7 +71,8 @@ public class CandidateFragment extends Fragment
             @Override
             public void done(List<Candidate> candidates, ParseException e) {
                 if (e != null) {
-                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
+                    refresh();
                 } else {
                     if (candidates.size() == 0) {
                         refresh();
