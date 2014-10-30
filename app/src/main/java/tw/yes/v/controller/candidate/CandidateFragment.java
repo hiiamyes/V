@@ -100,6 +100,7 @@ public class CandidateFragment extends Fragment
         query.findInBackground(new FindCallback<Candidate>() {
             public void done(final List<Candidate> candidates, ParseException e) {
                 if (e != null) {
+                    mProgress.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), "噢喔～有點問題喔！\n請確認您的網路狀態", Toast.LENGTH_LONG).show();
                 } else {
                     ParseObject.pinAllInBackground(candidates);
