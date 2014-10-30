@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LauncherActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#33000000">
 
     <RelativeLayout
         android:id="@+id/progress"
@@ -29,6 +30,11 @@
             android:text="新北市第七選區市議員候選人們"
             android:gravity="center"
             android:textSize="20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"

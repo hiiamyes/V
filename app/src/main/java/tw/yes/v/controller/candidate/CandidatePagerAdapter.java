@@ -4,34 +4,30 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.List;
-
-import tw.yes.v.model.Candidate;
-
 public class CandidatePagerAdapter extends FragmentPagerAdapter {
-
-    private List<Candidate> mCandidates;
 
     public CandidatePagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void setCandidates(List<Candidate> candidates) {
-        mCandidates = candidates;
+    private int count = 0;
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return CandidatePageFragment_.builder().mCandidate(mCandidates.get(position)).build();
+        return CandidatePageFragment_.builder().position(position).build();
     }
 
     @Override
     public int getCount() {
-        return mCandidates.size();
+        return count;
     }
 
     @Override
     public int getItemPosition(Object object) {
-        return super.getItemPosition(object);
+        return POSITION_NONE;
     }
 }
