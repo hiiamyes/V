@@ -3,14 +3,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
 
     <TextView
         android:id="@+id/textview_politics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:text="politicspoliticspoliticspoliticspoliticspoliticspolitics"
-        android:textSize="24sp" />
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textview_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="right"
+        android:text="資料來源：楊木萬的政見 | 2014 挺好的！綠黨政治代理人"
+        android:textSize="10sp" />
 </LinearLayout>

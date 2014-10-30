@@ -21,11 +21,11 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tw.yes.v.R;
 import tw.yes.v.model.Candidate;
+import tw.yes.v.model.Politics;
 
 @EFragment(R.layout.fragment_candidate)
 @OptionsMenu(R.menu.launcher_menu)
@@ -56,7 +56,6 @@ public class CandidateFragment extends Fragment
         mActionBar.setTitle("");
 
         mPagerAdapter = new CandidatePagerAdapter(getFragmentManager());
-        mPagerAdapter.setCandidates(new ArrayList<Candidate>());
         mPager.setAdapter(mPagerAdapter);
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -66,6 +65,7 @@ public class CandidateFragment extends Fragment
         });
 
         ParseQuery<Candidate> query = ParseQuery.getQuery("candidate");
+        query.orderByAscending("number");
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<Candidate>() {
             @Override
@@ -76,7 +76,7 @@ public class CandidateFragment extends Fragment
                     if (candidates.size() == 0) {
                         refresh();
                     } else {
-                        mPagerAdapter.setCandidates(candidates);
+                        mPagerAdapter.setCount(candidates.size());
                         mPagerAdapter.notifyDataSetChanged();
                         mPager.setOffscreenPageLimit(candidates.size());
                         for (Candidate candidate : candidates) {
@@ -90,26 +90,33 @@ public class CandidateFragment extends Fragment
 
     void refresh() {
         mProgress.setVisibility(View.VISIBLE);
-        ParseQuery<Candidate> queryW = ParseQuery.getQuery("candidate");
-        queryW.findInBackground(new FindCallback<Candidate>() {
-            public void done(List<Candidate> candidates, ParseException e) {
-                mProgress.setVisibility(View.GONE);
+        ParseQuery<Candidate> query = ParseQuery.getQuery("candidate");
+        query.orderByAscending("number");
+        query.findInBackground(new FindCallback<Candidate>() {
+            public void done(final List<Candidate> candidates, ParseException e) {
                 if (e != null) {
                     Toast.makeText(getActivity(), "噢喔～有點問題喔！\n請確認您的網路狀態", Toast.LENGTH_LONG).show();
                 } else {
                     ParseObject.pinAllInBackground(candidates);
-                    mPagerAdapter.setCandidates(candidates);
-                    mPagerAdapter.notifyDataSetChanged();
-                    mPager.setOffscreenPageLimit(candidates.size());
-                    if (mActionBar.getTabCount() == 0) {
-                        for (Candidate candidate : candidates) {
-                            mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
+                    ParseQuery<Politics> queryPolitics = ParseQuery.getQuery("politics");
+                    queryPolitics.findInBackground(new FindCallback<Politics>() {
+                        @Override
+                        public void done(List<Politics> politicses, ParseException e) {
+                            ParseObject.pinAllInBackground(politicses);
+                            mProgress.setVisibility(View.GONE);
+                            mPagerAdapter.setCount(candidates.size());
+                            mPagerAdapter.notifyDataSetChanged();
+                            mPager.setOffscreenPageLimit(candidates.size());
+                            for (Candidate candidate : candidates) {
+                                mActionBar.addTab(mActionBar.newTab().setText(candidate.getName()).setTabListener(mCandidateFragment));
+                            }
                         }
-                    }
+                    });
                 }
             }
         });
     }
+
 
     @OptionsItem(R.id.refresh)
     void menuRefresh() {
