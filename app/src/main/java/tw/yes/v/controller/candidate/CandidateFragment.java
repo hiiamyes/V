@@ -64,6 +64,7 @@ public class CandidateFragment extends Fragment
             }
         });
 
+
         ParseQuery<Candidate> query = ParseQuery.getQuery("candidate");
         query.orderByAscending("number");
         query.fromLocalDatastore();
@@ -72,6 +73,8 @@ public class CandidateFragment extends Fragment
             public void done(List<Candidate> candidates, ParseException e) {
                 if (e != null) {
 //                    Toast.makeText(getActivity(), "噢喔～有點問題喔！", Toast.LENGTH_LONG).show();
+                    refresh();
+                } else if (candidates.get(0).getNumber() == 0) {
                     refresh();
                 } else {
                     if (candidates.size() == 0) {
