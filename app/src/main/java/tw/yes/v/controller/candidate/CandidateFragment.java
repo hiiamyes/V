@@ -131,7 +131,7 @@ public class CandidateFragment extends Fragment
     @OptionsItem(R.id.feedback)
     void menuFeedback() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:joshuayes@gmail.com"));
+        intent.setData(Uri.parse("mailto:hiiamyes.app.v@gmail.com"));
         intent.putExtra(Intent.EXTRA_SUBJECT, "給 V 的意見回饋");
         intent.putExtra(Intent.EXTRA_TEXT, "內容：\n");
         startActivity(intent);
