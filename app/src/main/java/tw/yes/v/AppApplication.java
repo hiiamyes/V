@@ -20,7 +20,7 @@ public class AppApplication extends Application {
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "CK3JOXdcsoOt1fCk4VG4bbM09nmh2bdUnuuVB5kk", "F4i7OkP4eoiXXWustFp2OGYAUjfgV5SVncJF3T2C");
 
-        ParsePush.subscribeInBackground("yes");
+//        ParsePush.subscribeInBackground("yes");
         ParsePush.subscribeInBackground("");
 
     }
