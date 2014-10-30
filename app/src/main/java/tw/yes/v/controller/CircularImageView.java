@@ -38,6 +38,7 @@ public class CircularImageView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         Drawable drawable = getDrawable();
         if (drawable == null) {
             return;
@@ -47,14 +48,16 @@ public class CircularImageView extends ImageView {
         }
 
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        bitmap = Bitmap.createScaledBitmap(bitmap, getWidth(), getHeight(), false);
         BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
 
         // paint contains the shader that will texture the shape
         paint.setShader(shader);
 
         RectF rect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
-
         float radius = Math.min(bitmap.getWidth(), bitmap.getHeight()) / 2;
         canvas.drawRoundRect(rect, radius, radius, paint);
+
+
     }
 }

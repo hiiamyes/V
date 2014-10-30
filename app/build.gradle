@@ -2,20 +2,35 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/Users/Yes/Dropbox/Yes/mAndroid/V/app/debug.keystore');
+        }
+        release {
+            // for releasing, please use command line to run ./gradlew assembleRelease
+            if (System.console() != null) {
+                storeFile file(System.console().readLine("\n\$ Enter keystore path: "))
+                storePassword System.console().readLine("\n\$ Enter keystore password: ")
+                keyAlias System.console().readLine("\n\$ Enter key alias: ")
+                keyPassword System.console().readLine("\n\$ Enter key password: ")
+            }
+        }
+    }
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
-
     defaultConfig {
         applicationId "tw.yes.v"
         minSdkVersion 14
         targetSdkVersion 20
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.2"
     }
     buildTypes {
+        debug {}
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
